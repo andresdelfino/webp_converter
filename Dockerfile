@@ -3,7 +3,7 @@ FROM ubuntu:latest
 RUN ["apt-get", "update"]
 ARG DEBIAN_FRONTEND=noninteractive
 RUN ["apt-get", "install", "-y", "gcc", "make", "autoconf", "automake", "libtool", "libpng-dev", "git", "imagemagick"]
-RUN ["git", "clone", "https://chromium.googlesource.com/webm/libwebp"]
+RUN ["git", "clone", "--depth", "1", "https://chromium.googlesource.com/webm/libwebp"]
 
 WORKDIR /libwebp 
 RUN ["./autogen.sh"]
