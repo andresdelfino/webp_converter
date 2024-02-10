@@ -7,12 +7,7 @@ MOUNTED_PATH=/channel
 echo Ready
 
 while true; do
-    set +e
-    compgen -G "$MOUNTED_PATH/*.webp" > /dev/null
-    exit_status=$?
-    set -e
-
-    if [[ $exit_status -ne 0 ]]; then
+    if ! compgen -G "$MOUNTED_PATH/*.webp" > /dev/null; then
         sleep 5
         continue
     fi
@@ -27,7 +22,7 @@ while true; do
 
             frame_count=$(awk 'NR == 4 { print $NF }' $TEMP_FILE)
 
-            ARGS=
+            CONVERT_ARGS=()
 
             for frame in $(seq -w $frame_count); do
                 frame_digit=$(echo $frame | sed 's/^0*//')
@@ -38,10 +33,10 @@ while true; do
                 delay=$(($duration / 10))
                 page=+$x_offset+$y_offset
                 webpmux -get frame $frame $input_file -o - | dwebp -o $WORK_PATH/$frame.png -- -
-                ARGS="$ARGS -page $page -delay $delay $WORK_PATH/$frame.png"
+                CONVERT_ARGS+=(-page $page -delay $delay $WORK_PATH/$frame.png)
             done
 
-            eval convert -loop 0 $ARGS $MOUNTED_PATH/$output_filename
+            convert -loop 0 "${CONVERT_ARGS[@]}" $MOUNTED_PATH/$output_filename
             rm -f $WORK_PATH/*.png
         else
             output_filename=${input_file##*/}
