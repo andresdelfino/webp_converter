@@ -32,7 +32,7 @@ while true; do
                 duration=$(echo "$frame_line" | awk '{ print $7 }')
                 delay=$(($duration / 10))
                 page=+$x_offset+$y_offset
-                webpmux -get frame $frame $input_file -o - | dwebp -o $WORK_PATH/$frame.png -- -
+                webpmux -get frame $frame $input_file -o - | dwebp -mt -o $WORK_PATH/$frame.png -- -
                 CONVERT_ARGS+=(-page $page -delay $delay $WORK_PATH/$frame.png)
             done
 
@@ -41,7 +41,7 @@ while true; do
         else
             output_filename=${input_file##*/}
             output_filename=${output_filename/%webp/png}
-            dwebp -o $MOUNTED_PATH/$output_filename $input_file
+            dwebp -mt -o $MOUNTED_PATH/$output_filename $input_file
         fi
 
         rm $input_file
